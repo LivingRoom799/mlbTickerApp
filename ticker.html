@@ -1,28 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap"
+    rel="stylesheet"
+  />
+  <h1
+    style="
+      color: white;
+      text-align: center;
+      font-family: 'Ubuntu Mono', monospace;
+    "
+  >
+    MLB SCORES TICKER
+  </h1>
+  <body style="background-color: black">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       .scroll-left {
-        height: 50px;
+        white-space: nowrap;
+        height: 150px;
         overflow: hidden;
         position: relative;
-        background: yellow;
-        color: orange;
-        border: 1px solid orange;
+        background: black;
+        color: white;
+        border: 3px solid whitesmoke;
       }
       .scroll-left p {
+        font-family: "Ubuntu Mono", monospace;
+        white-space: nowrap;
         position: absolute;
+        font-size: 55px;
         width: 100%;
         height: 100%;
-        margin: 0;
+        margin: 45px;
         line-height: 50px;
         text-align: center;
         /* Starting position */
         transform: translateX(100%);
         /* Apply animation to this element */
-        animation: scroll-left 15s linear infinite;
+        animation: scroll-left 30s linear infinite;
       }
       /* Move it (define the animation) */
       @keyframes scroll-left {
@@ -34,10 +53,56 @@
         }
       }
     </style>
-
     <div class="scroll-left">
-      <p>Scroll left...</p>
+      <p id="textreel"></p>
     </div>
-  </head>
-  <body></body>
+    <script>
+      async function getAllGames() {
+        let response = await fetch(
+          "http://statsapi.mlb.com/api/v1/schedule/games/?sportId=1"
+        );
+        let data = await response.json();
+        return data;
+      }
+      getAllGames().then((data) =>
+        data.dates[0].games.forEach((game) => {
+          if (game.status.codedGameState == "F") {
+            document.getElementById("textreel").innerHTML +=
+              game.teams.away.team.name +
+              " " +
+              game.teams.away.score +
+              " @ " +
+              game.teams.home.team.name +
+              " " +
+              game.teams.home.score +
+              " FINAL | ";
+          } else if (game.status.codedGameState == "I") {
+            document.getElementById("textreel").innerHTML +=
+              game.teams.away.team.name +
+              " " +
+              game.teams.away.score +
+              " @ " +
+              game.teams.home.team.name +
+              " " +
+              game.teams.home.score +
+              " | ";
+          } else {
+            document.getElementById("textreel").innerHTML +=
+              game.teams.away.team.name +
+              " " +
+              game.teams.away.leagueRecord.wins +
+              "-" +
+              game.teams.away.leagueRecord.losses +
+              " @ " +
+              game.teams.home.team.name +
+              " " +
+              game.teams.home.leagueRecord.wins +
+              "-" +
+              game.teams.home.leagueRecord.losses +
+              " | ";
+          }
+        })
+      );
+    </script>
+  </body>
 </html>
