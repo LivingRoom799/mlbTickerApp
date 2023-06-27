@@ -84,7 +84,7 @@
     <script>
       async function getAllGames() {
         let response = await fetch(
-          "http://statsapi.mlb.com/api/v1/schedule/games/?sportId=1"
+          "https://statsapi.mlb.com/api/v1/schedule/games/?sportId=1"
         );
         let data = await response.json();
         return data;
